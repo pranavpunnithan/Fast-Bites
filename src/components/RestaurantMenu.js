@@ -1,12 +1,21 @@
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import CartContext from "../CartContext";
 import { useParams } from "react-router-dom";
 import restaurantData from "../data/restaurantData";
-import menuData from "../data/menuData";
 
 const RestaurantMenu = () => {
     const { id } = useParams();
+    
+    const [menuData,setMenuData]=useState({});
+
+    useEffect(()=>{
+        fetch("https://pranavpunnithan.github.io/fastbites-data/menus.json")
+        .then((response)=>response.json())
+        .then((data)=>setMenuData(data))
+        .catch((error)=>console.error("Error fecting menu:",error));
+    },[]);
+
 
     const {cartItems,setCartItems} = useContext(CartContext);
 

@@ -5,7 +5,7 @@ const RestaurantCard = ({ restaurant }) => {
         <div className="restaurant-card">
             <img
                 className="img1"
-                src="https://ik.imagekit.io/tvq1ymkssg/FastBites/fastbites.png?updatedAt=1781084343224"
+                src={restaurant.imageUrl}
                 alt="Restaurant"
             />
 

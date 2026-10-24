@@ -1,19 +1,32 @@
 import { useEffect,useState } from "react";
-import restaurantData from "../data/restaurantData";
+
 import RestaurantCard from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 const Body = () => {
    
     const [searchText, setSearchText] = useState("");
+    
+
+    const [restaurantData,setRestaurantData]=useState([]);
+   
 
     const [filteredRestaurants, setFilteredRestaurants] =
-        useState(restaurantData);
+        useState([]);
       const [isLoading,setIsLoading]=useState(true);
-    useEffect (() => {
-    setTimeout(() => {
-        setIsLoading(false);
-    }, 1000);
-}, []);
+    
+    useEffect(()=>{
+        fetch("https://pranavpunnithan.github.io/fastbites-data/restaurants.json")
+        .then((response)=>response.json())
+        .then((data)=>{
+            setRestaurantData(data);
+            setFilteredRestaurants(data);
+            setIsLoading(false);
+        })
+        .catch((error)=>{
+            console.log("Error fetching Restsurants",error);
+            setIsLoading(false);
+        });
+    },[]);
     return (
         <div className="body">
 
