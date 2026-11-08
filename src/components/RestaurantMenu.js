@@ -1,23 +1,33 @@
-
-import { useContext, useEffect, useState } from "react";
-import CartContext from "../CartContext";
+import { useDispatch } from "react-redux";
+import { addItem } from "../utils/cartSlice";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import restaurantData from "../data/restaurantData";
 
 const RestaurantMenu = () => {
+    const dispatch = useDispatch();
+
     const { id } = useParams();
-    
-    const [menuData,setMenuData]=useState({});
 
-    useEffect(()=>{
+    const [menuData, setMenuData] = useState({});
+    const [restaurantData, setRestaurantData] = useState([]);
+
+    useEffect(() => {
         fetch("https://pranavpunnithan.github.io/fastbites-data/menus.json")
-        .then((response)=>response.json())
-        .then((data)=>setMenuData(data))
-        .catch((error)=>console.error("Error fecting menu:",error));
-    },[]);
+            .then((response) => response.json())
+            .then((data) => setMenuData(data))
+            .catch((error) =>
+                console.error("Error fetching menu:", error)
+            );
 
-
-    const {cartItems,setCartItems} = useContext(CartContext);
+        fetch("https://pranavpunnithan.github.io/fastbites-data/restaurants.json")
+            .then((response) => response.json())
+            .then((data) => {
+                setRestaurantData(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching restaurants:", error);
+            });
+    }, []);
 
     const restaurant = restaurantData.find(
         (restaurant) => restaurant.id === Number(id)
@@ -26,38 +36,7 @@ const RestaurantMenu = () => {
     const menuItems = menuData[id] || [];
 
     const handleAddToCart = (food) => {
-        setCartItems((oldCart) => [
-            ...oldCart,
-            food
-        ]);
-    };
-    
-/*
-FIRST CLICK — Pizza 🍕
-
-1. You click Pizza.
-2. The Pizza object enters handleAddToCart through the parameter `food`.
-3. setCartItems receives an updater function.
-4. React passes the existing cart to `oldCart`. Initially, it is an empty array [].
-5. [...oldCart, food] creates a new array containing Pizza.
-6. React updates cartItems with that new array.
-
-Now the cart contains Pizza.
-
-
-SECOND CLICK — Burger 🍔
-
-1. You click Burger, so `food` receives the Burger object.
-2. React passes the existing cart, which contains Pizza, to `oldCart`.
-3. ...oldCart copies Pizza into a new array.
-4. `food` adds Burger to that same new array.
-5. React updates cartItems with the resulting array.
-
-Now the cart contains Pizza and Burger.
-*/
-
-    const handleClearCart = () => {
-        setCartItems([]);
+        dispatch(addItem(food));
     };
 
     if (!restaurant) {
@@ -65,57 +44,53 @@ Now the cart contains Pizza and Burger.
     }
 
     return (
-        <div>
-            <h1>{restaurant.name}</h1>
-            <p>Rating: {restaurant.rating}</p>
-            <p>Cuisine: {restaurant.cuisine}</p>
-            <p>Delivery time: {restaurant.deliveryTime}</p>
+        <div className="max-w-6xl mx-auto p-6">
+            <h1 className="text-3xl font-bold mb-4">
+                {restaurant.name}
+            </h1>
 
-            <h2>Menu</h2>
+            <p className="text-gray-600 mb-1">
+                Rating: ⭐ {restaurant.rating}
+            </p>
+
+            <p className="text-gray-600 mb-1">
+                Cuisine: {restaurant.cuisine}
+            </p>
+
+            <p className="text-gray-600 mb-6">
+                Delivery time: {restaurant.deliveryTime}
+            </p>
+
+            <h2 className="text-2xl font-bold mb-5">
+                Menu
+            </h2>
 
             {menuItems.length === 0 ? (
                 <p>Menu coming soon!</p>
             ) : (
                 menuItems.map((item) => (
-                    <div key={item.id}>
-                        <h3>{item.name}</h3>
-                        <p>Price: ₹{item.price}</p>
+                    <div
+                        key={item.id}
+                        className="flex justify-between items-center border border-gray-200 rounded-lg p-4 mb-4"
+                    >
+                        <div>
+                            <h3 className="text-lg font-semibold">
+                                {item.name}
+                            </h3>
+
+                            <p className="text-gray-600 mt-1">
+                                Price: ₹{item.price}
+                            </p>
+                        </div>
 
                         <button
+                            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
                             onClick={() => handleAddToCart(item)}
                         >
                             Add to Cart
                         </button>
                     </div>
                 ))
-            )}
-
-            <hr />
-
-            <h2>Cart ({cartItems.length})</h2>
-
-            {cartItems.length === 0 ? (
-                <p>Your cart is empty.</p>
-            ) : (
-                <>
-                    {cartItems.map((item, index) => (
-                        <p key={`${item.id}-${index}`}>
-                            {item.name} — ₹{item.price}
-                        </p>
-                    ))}
-
-                    <h3>
-                        Total: ₹
-                        {cartItems.reduce(
-                            (total, item) => total + item.price,
-                            0
-                        )}
-                    </h3>
-
-                    <button onClick={handleClearCart}>
-                        Clear Cart
-                    </button>
-                </>
             )}
         </div>
     );
