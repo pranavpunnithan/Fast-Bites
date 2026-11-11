@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { memo } from "react";
 
@@ -15,6 +16,10 @@ const RestaurantCard = memo(({ restaurant }) => {
                         className="h-[180px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         src={restaurant.imageUrl}
                         alt={restaurant.name}
+                        loading="lazy"
+                        decoding="async"
+                        width="300"
+                        height="200"
                     />
                 </div>
 
