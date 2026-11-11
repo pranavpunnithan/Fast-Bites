@@ -38,7 +38,7 @@ const Header = () => {
                             className="px-2 py-2 hover:text-orange-500 transition-colors"
                             to="/cart"
                         >
-                            Cart ({cartItems.length})
+                        🛒 Cart ({cartItems.length})
                         </Link>
                     </li>
 
