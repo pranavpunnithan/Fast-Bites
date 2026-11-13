@@ -127,7 +127,7 @@ Through this project, I practiced:
 
 ## 👨‍💻 Author
 
-**Pranav P **
+Pranav P 
 
 GitHub: https://github.com/pranavpunnithan
 
